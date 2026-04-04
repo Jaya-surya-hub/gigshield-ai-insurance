@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+requests
+scikit-learn
+pandas
+joblib
+xgboost
+google-generativeai
+python-dotenv
+opencv-python-headless
+numpy
