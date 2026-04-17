@@ -1,25 +1,16 @@
 import requests
 
-def get_current_conditions(zone_id: str):
+def get_current_conditions(lat: float, lon: float):
     """
-    LIVE WEATHER API: Fetches real-time precipitation data from Open-Meteo.
+    LIVE WEATHER API: Fetches real-time precipitation data from Open-Meteo using actual GPS boundaries.
     """
-    print(f"🌤️ Fetching LIVE weather data for {zone_id}...")
+    print(f"🌤️ Fetching LIVE weather data for Lat: {lat}, Lon: {lon}...")
     
-    # Map your zone IDs to actual GPS coordinates
-    zone_coordinates = {
-        "COIMBATORE_PEELAMEDU": {"lat": 11.0261, "lon": 77.0028},
-        "COIMBATORE_UKKADAM": {"lat": 10.9905, "lon": 76.9608}
-    }
-    
-    # Default to Peelamedu if zone isn't found
-    coords = zone_coordinates.get(zone_id, zone_coordinates["COIMBATORE_PEELAMEDU"])
-    
-    # Open-Meteo API URL (No key required)
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={coords['lat']}&longitude={coords['lon']}&current=precipitation,temperature_2m"
-    
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=precipitation_sum&forecast_days=7&timezone=auto"
+
     try:
-        response = requests.get(url, timeout=5)
+        # 2. Increase the timeout to 10 seconds to allow for network lag
+        response = requests.get(url, timeout=10) 
         response.raise_for_status()
         data = response.json()
         
@@ -27,9 +18,6 @@ def get_current_conditions(zone_id: str):
         rainfall_mm = current_data.get("precipitation", 0.0)
         temp_c = current_data.get("temperature_2m", 0.0)
         
-        # We add a little hackathon magic here: 
-        # If it's not actually raining during your demo, we force a simulated spike 
-        # so you can still show the trigger working.
         is_demo_mode = True 
         if is_demo_mode and rainfall_mm < 50.0:
             print("   [Demo Mode] Forcing rainfall spike to trigger policy...")
@@ -43,9 +31,32 @@ def get_current_conditions(zone_id: str):
         
     except requests.exceptions.RequestException as e:
         print(f"❌ Open-Meteo API failed: {e}. Falling back to mock data.")
-        # Fail-safe fallback so your demo doesn't crash if the WiFi drops
         return {
             "rainfall_24h": 65.0,
             "temperature_c": 28,
             "is_monsoon": True
         }
+
+
+def is_monsoon_season(lat: float, lon: float) -> bool:
+    """
+    Checks the 7-day forecast cumulative rainfall to determine monsoon conditions.
+    Returns True if 7-day total > 100mm (monsoon threshold).
+    Called by /get-quote to adjust XGBoost premium calculation.
+    """
+    url = (
+        f"https://api.open-meteo.com/v1/forecast"
+        f"?latitude={lat}&longitude={lon}"
+        f"&daily=precipitation_sum&forecast_days=7&timezone=auto"
+    )
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        weekly_rain = sum(data.get("daily", {}).get("precipitation_sum", [0]) or [0])
+        is_monsoon = weekly_rain > 100.0
+        print(f"🌧️ Monsoon check: 7-day total = {weekly_rain:.1f}mm → {'MONSOON' if is_monsoon else 'DRY'}")
+        return is_monsoon
+    except Exception as e:
+        print(f"⚠️ Monsoon season check failed: {e}. Defaulting to non-monsoon.")
+        return False
