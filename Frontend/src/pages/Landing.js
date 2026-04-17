@@ -1,45 +1,43 @@
+// src/pages/Landing.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, CloudLightning, Wallet, ArrowRight } from 'lucide-react';
+import { ShieldCheck, CloudLightning } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Landing = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
 
     return (
-        <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', padding: '24px 0' }}>
-            <div style={{ backgroundColor: '#eff6ff', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 24px' }}>
-                <ShieldCheck size={40} color="#2563eb" />
+        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '40px 20px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+                <div style={{ backgroundColor: '#eff6ff', padding: '16px', borderRadius: '50%' }}>
+                    <CloudLightning size={48} color="#2563eb" />
+                </div>
             </div>
 
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>
-                Weather Protection for the Modern Gig Worker
+            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '16px', lineHeight: '1.2' }}>
+                {t('Welcome To Gigshield')}
             </h1>
-            <p style={{ fontSize: '1.125rem', color: '#4b5563', marginBottom: '40px', lineHeight: '1.6' }}>
-                Get instant, zero-touch payouts when severe weather or infrastructure outages disrupt your delivery earnings. Powered by Guidewire & AI.
+
+            <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '40px', lineHeight: '1.5' }}>
+                {t('The parametric insurance')}
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px', textAlign: 'left', marginBottom: '40px' }}>
-                <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <CloudLightning size={24} color="#f59e0b" style={{ flexShrink: 0 }} />
-                    <div>
-                        <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontWeight: 'bold' }}>Parametric Triggers</h3>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Payouts trigger automatically when rainfall exceeds your zone's safety limits.</p>
-                    </div>
-                </div>
-                <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <Wallet size={24} color="#10b981" style={{ flexShrink: 0 }} />
-                    <div>
-                        <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontWeight: 'bold' }}>Dynamic AI Pricing</h3>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>Fair premiums calculated in real-time based on local infrastructure and your GigScore.</p>
-                    </div>
-                </div>
-            </div>
-
+            {/* 52px Accessible Button [cite: 1530-1536] */}
             <button
                 onClick={() => navigate('/onboarding')}
-                style={{ backgroundColor: '#2563eb', color: 'white', padding: '16px 32px', borderRadius: '8px', fontSize: '1.125rem', fontWeight: 'bold', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}
+                style={{ width: '100%', minHeight: '52px', backgroundColor: '#2563eb', color: 'var(--bg-secondary)', borderRadius: '8px', border: 'none', fontSize: '1.125rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 6px rgba(37, 99, 235, 0.2)', marginBottom: '16px' }}
             >
-                Get Your AI Quote <ArrowRight size={20} />
+                <ShieldCheck size={24} />
+                Sign Up
+            </button>
+
+            <button
+                onClick={() => navigate('/login')}
+                style={{ width: '100%', minHeight: '52px', backgroundColor: 'transparent', color: 'var(--text-secondary)', border: '2px solid var(--border-color)', borderRadius: '8px', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+                Log In
             </button>
         </div>
     );
