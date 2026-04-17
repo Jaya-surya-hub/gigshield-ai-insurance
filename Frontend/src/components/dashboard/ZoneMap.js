@@ -40,8 +40,8 @@ const ZoneMap = ({ zoneId, userLocation }) => {
 
     return (
         <div style={{ marginTop: '24px', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <div style={{ padding: '16px', backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between' }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#374151' }}>Live Coverage Area</h3>
+            <div style={{ padding: '16px', backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between' }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-secondary)' }}>Live Coverage Area</h3>
                 {userLocation?.isMoving && <span style={{ color: '#10b981', fontSize: '0.75rem', fontWeight: 'bold' }}>🏃‍♂️ Motion Detected</span>}
             </div>
 
