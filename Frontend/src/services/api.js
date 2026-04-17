@@ -8,6 +8,16 @@ const apiClient = axios.create({
 });
 
 export const gigShieldAPI = {
+    getZones: async () => {
+        try {
+            const response = await apiClient.get('/zones');
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching zones:", error);
+            return [];
+        }
+    },
+
     getQuote: async (zoneId) => {
         try {
             const response = await apiClient.get(`/get-quote`, { params: { zone_id: zoneId } });
@@ -39,6 +49,34 @@ export const gigShieldAPI = {
             return response.data.current;
         } catch (error) { console.error("Error:", error); return null; }
     },
+    getWorkerPolicy: async (workerId) => {
+        try {
+            const response = await apiClient.get('/policies/worker/' + workerId);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching policy:", error);
+            return null;
+        }
+    },
+    pausePolicy: async (policyId) => {
+        try {
+            const response = await apiClient.patch(`/policies/${policyId}/pause`);
+            return response.data;
+        } catch (error) {
+            console.error("Error pausing policy:", error);
+            throw error;
+        }
+    },
+    registerWorker: async (phone, zone) => {
+        try {
+            const response = await apiClient.post('/register-worker', { phone_number: phone, home_zone_id: zone });
+            return response.data;
+        } catch (error) {
+            console.error("Error registering worker:", error);
+            // Return fallback — Onboarding already handles this with .catch()
+            throw error;
+        }
+    },
     getClaimHistory: async (workerId) => {
         try {
             const response = await apiClient.get(`/claims/${workerId}`);
@@ -46,6 +84,35 @@ export const gigShieldAPI = {
         } catch (error) {
             console.error("Error fetching claims:", error);
             return [];
+        }
+    },
+    getWorkerGigScore: async (workerId) => {
+        try {
+            const response = await apiClient.get(`/workers/${workerId}/gigscore`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching gigscore:", error);
+            return null;
+        }
+    },
+    
+    createWeatherAlert: async (zoneId) => {
+        try {
+            const response = await apiClient.post(`/admin/create-alert?zone_id=${zoneId}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error creating alert:", error);
+            throw error;
+        }
+    },
+    
+    clearWeatherAlerts: async (zoneId) => {
+        try {
+            const response = await apiClient.post(`/admin/clear-alerts?zone_id=${zoneId}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error clearing alerts:", error);
+            throw error;
         }
     }
 };
