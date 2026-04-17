@@ -15,7 +15,7 @@ async def verify_environment(payload: VideoVerificationPayload):
     print(f"📸 Received {len(payload.frames)} frames from Worker {payload.worker_id} for CV Analysis.")
     
     # Send the frames to our OpenCV pipeline
-    analysis_result = cv_engine.analyze_video_frames(payload.frames)
+    analysis_result = cv_engine.analyze_video_frames(payload.frames, payload.zone_id)
     
     print(f"🧠 AI Vision Result: {analysis_result}")
     
