@@ -1,84 +1,56 @@
-from database import SessionLocal
-from models import Worker, Policy, Zone
+ # gigshield-backend/routers/admin.py
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from database import get_db
+from models import Worker, Policy, Claim
 
-def seed_database():
-    db = SessionLocal()
-    
-    # Check if we already have workers to avoid duplicates
-    if db.query(Worker).count() > 0:
-        print("Database is already seeded!")
-        db.close()
-        return
+router = APIRouter()
 
-    print("🌍 Seeding Zones...")
-    z1 = Zone(id="COIMBATORE_PEELAMEDU", display_name="Peelamedu", description="Central Hub • High Elevation", latitude=11.0261, longitude=77.0028)
-    z2 = Zone(id="COIMBATORE_UKKADAM", display_name="Ukkadam", description="Lake Adjacent • High Traffic", latitude=10.9905, longitude=76.9608)
-    z3 = Zone(id="CHENNAI_ADYAR", display_name="Adyar, Chennai", description="Coastal • Dense Traffic", latitude=13.0033, longitude=80.2555)
-    db.add_all([z1, z2, z3])
-    db.commit()
+@router.get('/actuarial-summary') 
+def get_actuarial_summary(db: Session = Depends(get_db)):
+    # Calculate premium pool financials
+    total_workers = db.query(func.count(Worker.id)).filter(Worker.is_active == True).scalar() or 0
+    avg_premium = db.query(func.avg(Policy.weekly_premium)).filter(Policy.is_active == True).scalar() or 0
+    weekly_pool = db.query(func.sum(Policy.weekly_premium)).filter(Policy.is_active == True).scalar() or 0.0
 
-    print("🌱 Seeding database with mock gig workers...")
+    # Actual claim experience
+    total_claims = db.query(func.count(Claim.id)).scalar() or 0
+    approved_claims = db.query(func.count(Claim.id)).filter(Claim.status.in_(['APPROVED','PAID_ZERO_TOUCH'])).scalar() or 0
+    total_payout = db.query(func.sum(Claim.payout_amount)).filter(Claim.status.in_(['APPROVED','PAID_ZERO_TOUCH'])).scalar() or 0.0
+    avg_payout = round(total_payout / approved_claims, 2) if approved_claims > 0 else 0.0
 
-    # Worker 1: Ramesh in Peelamedu (High Infra, High Trust)
-    worker_1 = Worker(
-        phone_number="+919876543210",
-        platform="Zomato",
-        home_zone_id="COIMBATORE_PEELAMEDU",
-        gig_score=90, # Very trusted
-        is_active=True
-    )
-    
-    # Worker 2: Priya in Ukkadam (Low Infra, Mid Trust)
-    worker_2 = Worker(
-        phone_number="+919876543211",
-        platform="Swiggy",
-        home_zone_id="COIMBATORE_UKKADAM",
-        gig_score=60, # Average trust
-        is_active=True
-    )
-    
-    # Worker 3: The "Spoofer" (Terrible Trust Score)
-    worker_3 = Worker(
-        phone_number="+919876543212",
-        platform="Zomato",
-        home_zone_id="COIMBATORE_PEELAMEDU",
-        gig_score=25, # High risk for fraud
-        is_active=True
-    )
+    # Break-even and Loss Analysis
+    actual_loss_ratio = round((total_payout / weekly_pool) * 100, 1) if weekly_pool > 0 else 0.0
+    expense_ratio = 0.25 
+    expected_claim_freq = 0.25 # claims per worker per week
+    breakeven_premium = round((expected_claim_freq * avg_payout) / (1 - expense_ratio), 2) if avg_payout > 0 else 35.0
 
-    db.add_all([worker_1, worker_2, worker_3])
-    db.commit() # Commit workers to generate their IDs
-
-    # Create active policies for these workers
-    policy_1 = Policy(
-        worker_id=worker_1.id,
-        guidewire_policy_number="GIG-POL-001",
-        plan_tier="Full",
-        weekly_premium=32.50, # Discounted for high GigScore
-        is_active=True
-    )
-    
-    policy_2 = Policy(
-        worker_id=worker_2.id,
-        guidewire_policy_number="GIG-POL-002",
-        plan_tier="Basic",
-        weekly_premium=45.00, # Higher premium for low-lying zone
-        is_active=True
-    )
-
-    policy_3 = Policy(
-        worker_id=worker_3.id,
-        guidewire_policy_number="GIG-POL-003",
-        plan_tier="Full",
-        weekly_premium=55.00, # High premium for low trust
-        is_active=True
-    )
-
-    db.add_all([policy_1, policy_2, policy_3])
-    db.commit()
-    
-    print("✅ Successfully injected 3 Workers and 3 Policies!")
-    db.close()
-
-if __name__ == "__main__":
-    seed_database()
+    return {
+        'premium_pool': {
+            'active_workers': total_workers,
+            'weekly_pool_inr': round(weekly_pool, 2),
+            'avg_weekly_premium_inr': round(avg_premium, 2),
+            'annual_projection_inr': round(weekly_pool * 52, 2),
+        },
+        'claim_experience': {
+            'total_claims_processed': total_claims,
+            'approved_claims': approved_claims,
+            'avg_payout_per_claim_inr': avg_payout,
+            'total_payouts_inr': round(total_payout, 2),
+        },
+        'loss_analysis': {
+            'actual_loss_ratio_pct': actual_loss_ratio,
+            'target_loss_ratio_pct': 40.0,
+            'status': 'WITHIN_TARGET' if actual_loss_ratio <= 40.0 else 'ABOVE_TARGET',
+        },
+        'premium_adequacy': {
+            'breakeven_premium_inr': breakeven_premium,
+            'current_avg_premium_inr': round(avg_premium, 2),
+            'expense_ratio_assumed': expense_ratio,
+        },
+        'frequency_model': {
+            'expected_claims_per_worker_per_week': expected_claim_freq,
+            'high_ifi_zone_multiplier': 2.1,
+        }
+    }
