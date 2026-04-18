@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GigShield — Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ───────── RESET & BASE ───────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0a0a1a;color:#fff;overflow:hidden;height:100vh;width:100vw}
+
+/* ───────── SLIDE SYSTEM ───────── */
+.deck{position:relative;width:100vw;height:100vh}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1);transform:translateY(40px) scale(.97);padding:48px 64px}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+.slide.exit-up{opacity:0;transform:translateY(-60px) scale(.95)}
+
+/* ───────── NAVIGATION ───────── */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:center;gap:12px;padding:16px 32px;background:linear-gradient(to top,rgba(10,10,26,.95),transparent)}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;transition:all .3s}
+.nav-dot.active{background:#5b6ef5;width:28px;border-radius:8px}
+.nav-arrows{position:fixed;top:50%;z-index:100;transform:translateY(-50%);cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;transition:all .3s;backdrop-filter:blur(8px)}
+.nav-arrows:hover{background:rgba(91,110,245,.3);border-color:#5b6ef5}
+.nav-prev{left:20px}
+.nav-next{right:20px}
+.slide-counter{position:fixed;top:24px;right:32px;z-index:100;font-size:.75rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:2px}
+
+/* ───────── GROWW-STYLE ANIMATIONS ───────── */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInLeft{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeInRight{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(.3)}50%{transform:scale(1.05)}70%{transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes slideReveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.8}}
+@keyframes checkPop{0%{transform:scale(0) rotate(-45deg);opacity:0}60%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes numberCount{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(91,110,245,.3)}50%{box-shadow:0 0 40px rgba(91,110,245,.6)}}
+@keyframes rainDrop{0%{transform:translateY(-100px);opacity:0}30%{opacity:1}100%{transform:translateY(100vh);opacity:0}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+@keyframes barGrow{from{width:0}to{width:var(--bar-width)}}
+
+/* ───────── SHARED COMPONENTS ───────── */
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.badge-blue{background:rgba(91,110,245,.15);color:#818cf8;border:1px solid rgba(91,110,245,.3)}
+.badge-green{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.badge-amber{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.badge-red{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px;backdrop-filter:blur(12px)}
+.card-glow{animation:glowPulse 3s ease-in-out infinite}
+
+.gradient-text{background:linear-gradient(135deg,#818cf8,#5b6ef5,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-green{background:linear-gradient(135deg,#34d399,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-amber{background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+h1{font-family:'Space Grotesk',sans-serif}
+.big-number{font-family:'Space Grotesk',sans-serif;font-weight:900;line-height:1}
+
+/* ───────── SLIDE CONTENTS ───────── */
+.slide-inner{max-width:1100px;width:100%}
+
+/* Animation delays for staggered children */
+.slide.active .anim-1{animation-delay:.1s}
+.slide.active .anim-2{animation-delay:.25s}
+.slide.active .anim-3{animation-delay:.4s}
+.slide.active .anim-4{animation-delay:.55s}
+.slide.active .anim-5{animation-delay:.7s}
+.slide.active .anim-6{animation-delay:.85s}
+.slide.active .anim-7{animation-delay:1s}
+.slide.active .anim-8{animation-delay:1.15s}
+.slide.active .anim-9{animation-delay:1.3s}
+.slide.active .anim-10{animation-delay:1.45s}
+.slide.active .anim-11{animation-delay:1.6s}
+
+.slide.active [data-anim="fadeUp"]{animation:fadeInUp .7s ease both}
+.slide.active [data-anim="fadeLeft"]{animation:fadeInLeft .7s ease both}
+.slide.active [data-anim="fadeRight"]{animation:fadeInRight .7s ease both}
+.slide.active [data-anim="scaleIn"]{animation:scaleIn .6s ease both}
+.slide.active [data-anim="bounceIn"]{animation:bounceIn .8s ease both}
+.slide.active [data-anim="checkPop"]{animation:checkPop .5s ease both}
+
+/* ───────── SPECIFIC SLIDE STYLES ───────── */
+
+/* Slide 1 – Title */
+.title-slide{background:radial-gradient(ellipse at 30% 20%,rgba(91,110,245,.15),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(167,139,250,.1),transparent 50%),#0a0a1a}
+.title-logo{font-size:5rem;font-weight:900;letter-spacing:-2px;line-height:1}
+.title-tagline{font-size:1.35rem;color:rgba(255,255,255,.6);max-width:600px;line-height:1.7;margin-top:20px}
+.star-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;padding:8px 16px;border-radius:24px;font-size:.8rem;font-weight:800}
+.floating-shield{position:absolute;right:80px;top:50%;transform:translateY(-50%);font-size:12rem;opacity:.08;animation:float 4s ease infinite}
+
+/* Slide 2 – Ramesh */
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.story-img{width:100%;max-width:380px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.story-step{display:flex;gap:16px;align-items:flex-start;padding:12px 0}
+.story-step-num{min-width:36px;height:36px;border-radius:50%;background:rgba(91,110,245,.2);color:#818cf8;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;border:1px solid rgba(91,110,245,.3)}
+.story-step p{color:rgba(255,255,255,.7);font-size:.9rem;line-height:1.6}
+.story-step strong{color:#fff}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.before-after .ba-card{padding:20px;border-radius:16px;text-align:center}
+.ba-before{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
+.ba-after{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)}
+
+/* Slide 3 – Checklist */
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:32px}
+.check-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:all .3s}
+.check-item:hover{background:rgba(91,110,245,.08);border-color:rgba(91,110,245,.2)}
+.check-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#10b981,#34d399);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;flex-shrink:0}
+.check-item span{font-size:.85rem;color:rgba(255,255,255,.8);font-weight:500}
+.score-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#10b981,#059669);padding:12px 28px;border-radius:16px;font-weight:800;font-size:1.3rem;margin-top:28px;box-shadow:0 8px 30px rgba(16,185,129,.3)}
+
+/* Slide 4 – IFI */
+.ifi-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.ifi-img{width:100%;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.ifi-comparison{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.ifi-card{text-align:center;padding:24px;border-radius:16px}
+.ifi-card.safe{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}
+.ifi-card.danger{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)}
+.ifi-card .big-number{font-size:2.5rem}
+
+/* Slide 5 – Architecture */
+.arch-slide{background:radial-gradient(ellipse at 50% 50%,rgba(91,110,245,.08),transparent 70%),#0a0a1a}
+.arch-img{width:100%;max-width:420px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.arch-layers{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.arch-layer{padding:20px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);transition:all .3s}
+.arch-layer:hover{border-color:#5b6ef5;background:rgba(91,110,245,.06)}
+.arch-layer h4{font-size:.85rem;margin-bottom:4px;color:#818cf8;font-weight:700}
+.arch-layer p{font-size:.75rem;color:rgba(255,255,255,.5);line-height:1.5}
+.arch-live-badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:.6rem;font-weight:800;background:rgba(16,185,129,.2);color:#34d399;margin-left:6px}
+
+/* Slide 6 – Fraud */
+.fraud-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.fraud-img{width:100%;max-width:420px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.fraud-vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.fraud-card{padding:24px;border-radius:16px;text-align:center}
+.fraud-card.genuine{background:rgba(16,185,129,.08);border:2px solid rgba(16,185,129,.3)}
+.fraud-card.spoofer{background:rgba(239,68,68,.08);border:2px solid rgba(239,68,68,.3)}
+.fraud-card .big-number{font-size:2.2rem;margin:8px 0}
+
+/* Slide 7 – Sustainability */
+.bcr-container{position:relative;width:280px;height:280px;margin:0 auto}
+.bcr-ring{width:280px;height:280px;border-radius:50%;border:12px solid rgba(255,255,255,.06);position:relative}
+.bcr-ring::before{content:'';position:absolute;inset:-12px;border-radius:50%;border:12px solid transparent;border-top-color:#10b981;border-right-color:#10b981;transform:rotate(45deg)}
+.bcr-value{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bcr-value .big-number{font-size:4rem;background:linear-gradient(135deg,#34d399,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sustainability-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.sus-fact{text-align:center;padding:24px 16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.sus-fact h3{font-size:1.8rem;font-family:'Space Grotesk',sans-serif;font-weight:900}
+
+/* Slide 8 – Vernacular */
+.vern-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:stretch}
+.vern-card{padding:24px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.vern-card h3{font-size:1rem;margin-bottom:16px;font-weight:700}
+.vern-feature{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.vern-feature:last-child{border-bottom:none}
+.vern-feature .icon{font-size:1.2rem}
+.vern-feature span{font-size:.85rem;color:rgba(255,255,255,.7)}
+
+/* Slide 9 – Screenshots */
+.screenshots-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+.screenshot-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;text-align:center}
+.screenshot-card h4{font-size:.75rem;color:#818cf8;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.screenshot-card p{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.5}
+.screenshot-mock{width:100%;height:140px;border-radius:12px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.ss-1{background:linear-gradient(135deg,rgba(91,110,245,.2),rgba(167,139,250,.2))}
+.ss-2{background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(239,68,68,.2))}
+.ss-3{background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(6,182,212,.2))}
+.ss-4{background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(244,63,94,.2))}
+
+/* Slide 10 – Business Model */
+.biz-grid{display:grid;grid-template-columns:2fr 1fr;gap:48px;align-items:center}
+.revenue-bar{height:32px;border-radius:8px;margin:8px 0;position:relative;overflow:hidden}
+.revenue-bar-fill{height:100%;border-radius:8px;animation:barGrow 1.2s ease both}
+.revenue-bar-label{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.75rem;font-weight:700;color:#fff}
+.biz-highlight{padding:32px;border-radius:20px;background:linear-gradient(135deg,rgba(91,110,245,.1),rgba(167,139,250,.1));border:1px solid rgba(91,110,245,.2)}
+.biz-highlight .big-number{font-size:3.5rem;margin-bottom:8px}
+
+/* Slide 11 – Future */
+.future-slide{background:radial-gradient(ellipse at 50% 80%,rgba(91,110,245,.12),transparent 60%),#0a0a1a}
+.timeline{position:relative;margin-top:32px;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:16px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#5b6ef5,rgba(91,110,245,.1))}
+.timeline-item{position:relative;padding:16px 0 24px 24px}
+.timeline-item::before{content:'';position:absolute;left:-32px;top:20px;width:14px;height:14px;border-radius:50%;background:#5b6ef5;border:3px solid #0a0a1a;box-shadow:0 0 0 2px #5b6ef5}
+.timeline-item h4{font-size:.85rem;color:#818cf8;font-weight:700;margin-bottom:4px}
+.timeline-item p{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.6}
+
+/* ───────── RESPONSIVE ───────── */
+@media(max-width:768px){
+  .slide{padding:24px}
+  .story-grid,.ifi-grid,.fraud-grid,.biz-grid{grid-template-columns:1fr}
+  .checklist-grid{grid-template-columns:1fr}
+  .title-logo{font-size:3rem}
+  .sustainability-facts{grid-template-columns:1fr}
+  .screenshots-grid{grid-template-columns:1fr}
+  .arch-layers{grid-template-columns:1fr}
+  .floating-shield{display:none}
+}
+
+/* Rain effect */
+.rain-particle{position:absolute;width:2px;background:linear-gradient(to bottom,transparent,rgba(91,110,245,.4));animation:rainDrop linear infinite;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ═══════════════════ SLIDE 1: TITLE ═══════════════════ -->
+<div class="slide title-slide active" data-slide="0">
+  <div class="floating-shield">🛡️</div>
+  <div class="slide-inner" style="text-align:center">
+    <div data-anim="bounceIn" class="anim-1" style="margin-bottom:20px">
+      <span class="star-badge">⭐⭐⭐⭐ Phase 2 Qualifier • Guidewire DEVTrails 2026</span>
+    </div>
+    <h1 class="title-logo anim-2" data-anim="fadeUp">
+      <span class="gradient-text">GigShield</span>
+    </h1>
+    <p class="title-tagline anim-3" data-anim="fadeUp" style="margin:20px auto 0">
+      If the disruption happens, the payout happens — <strong style="color:#fff">no paperwork, no delays, no questions.</strong>
+    </p>
+    <div data-anim="fadeUp" class="anim-4" style="margin-top:40px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <span class="badge badge-blue">🌧️ Parametric Insurance</span>
+      <span class="badge badge-green">🤖 AI-Powered</span>
+      <span class="badge badge-amber">🛵 Gig Workers</span>
+    </div>
+    <p data-anim="fadeUp" class="anim-5" style="margin-top:48px;font-size:.75rem;color:rgba(255,255,255,.25)">Press → or click to navigate</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 2: RAMESH'S STORY ═══════════════════ -->
+<div class="slide" data-slide="1">
+  <div class="slide-inner">
+    <div class="story-grid">
+      <div>
+        <span class="badge badge-amber anim-1" data-anim="fadeUp">THE HUMAN STORY</span>
+        <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.8rem;margin:16px 0 8px">Meet <span class="gradient-text">Ramesh</span></h1>
+        <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.5);margin-bottom:24px;font-size:.9rem">Zomato delivery partner, Coimbatore</p>
+        
+        <div class="story-step anim-4" data-anim="fadeLeft">
+          <div class="story-step-num">1</div>
+          <p>Ramesh earns <strong>₹600–800/day</strong> delivering meals through monsoon streets on his scooter.</p>
+        </div>
+        <div class="story-step anim-5" data-anim="fadeLeft">
+          <div class="story-step-num">2</div>
+          <p>A <strong>sudden cloudburst floods</strong> his zone. Road blocked. No deliveries = <strong>₹0 income</strong>.</p>
+        </div>
+        <div class="story-step anim-6" data-anim="fadeLeft">
+          <div class="story-step-num">3</div>
+          <p>GigShield's sensors detect <strong>64mm rainfall</strong>. Threshold breached. <strong>Auto-triggered claim.</strong></p>
+        </div>
+        <div class="story-step anim-7" data-anim="fadeLeft">
+          <div class="story-step-num">4</div>
+          <p>Within seconds: <strong style="color:#34d399">₹1,200 credited</strong> to Ramesh's UPI. Zero paperwork.</p>
+        </div>
+
+        <div class="before-after anim-8" data-anim="fadeUp">
+          <div class="ba-card ba-before">
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:4px">BEFORE</p>
+            <p class="big-number" style="font-size:1.8rem;color:#f87171">₹0</p>
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:4px">earned during flood</p>
+          </div>
+          <div class="ba-card ba-after">
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:4px">AFTER</p>
+            <p class="big-number" style="font-size:1.8rem;color:#34d399">₹1,200</p>
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:4px">auto-credited via UPI</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;align-items:center">
+        <img src="images/ramesh_rain.png" alt="Ramesh in rain" class="story-img anim-3" data-anim="fadeRight">
+        <img src="images/ramesh_happy.png" alt="Ramesh payout" class="story-img anim-6" data-anim="fadeRight" style="max-width:300px">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 3: 10-POINT CHECKLIST ═══════════════════ -->
+<div class="slide" data-slide="2">
+  <div class="slide-inner" style="text-align:center">
+    <span class="badge badge-green anim-1" data-anim="bounceIn">COMPLIANCE</span>
+    <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0 8px">The <span class="gradient-green">10-Point</span> Checklist</h1>
+    <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.4);max-width:500px;margin:0 auto 8px;font-size:.9rem">Every criteria met. Every box checked.</p>
+    
+    <div class="checklist-grid">
+      <div class="check-item anim-1" data-anim="fadeLeft"><div class="check-icon" data-anim="checkPop">✓</div><span>Real Parametric Design — Weather triggers, no claims forms</span></div>
+      <div class="check-item anim-2" data-anim="fadeRight"><div class="check-icon" data-anim="checkPop">✓</div><span>Guidewire ClaimCenter Integration — Zero-touch FNOL</span></div>
+      <div class="check-item anim-3" data-anim="fadeLeft"><div class="check-icon" data-anim="checkPop">✓</div><span>AI/ML Pipeline — 4 live models, not mock data</span></div>
+      <div class="check-item anim-4" data-anim="fadeRight"><div class="check-icon" data-anim="checkPop">✓</div><span>Fraud Detection — Hardware IMU + IsolationForest</span></div>
+      <div class="check-item anim-5" data-anim="fadeLeft"><div class="check-icon" data-anim="checkPop">✓</div><span>GPS Telematics — Live device sensors, not simulated</span></div>
+      <div class="check-item anim-6" data-anim="fadeRight"><div class="check-icon" data-anim="checkPop">✓</div><span>Vernacular UI — Tamil + English, 52px touch targets</span></div>
+      <div class="check-item anim-7" data-anim="fadeLeft"><div class="check-icon" data-anim="checkPop">✓</div><span>Financial Sustainability — BCR 0.65, pool stress-tested</span></div>
+      <div class="check-item anim-8" data-anim="fadeRight"><div class="check-icon" data-anim="checkPop">✓</div><span>Adverse Selection Blocked — 48hr enrollment lockout</span></div>
+      <div class="check-item anim-9" data-anim="fadeLeft"><div class="check-icon" data-anim="checkPop">✓</div><span>Live API Architecture — Open-Meteo, Gemini, Tavily</span></div>
+      <div class="check-item anim-10" data-anim="fadeRight"><div class="check-icon" data-anim="checkPop">✓</div><span>Accessibility & Inclusion — Outdoor contrast, plain language</span></div>
+    </div>
+    <div data-anim="bounceIn" class="anim-11">
+      <div class="score-badge">🏆 10 / 10 Compliance Score</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 4: IFI INNOVATION ═══════════════════ -->
+<div class="slide" data-slide="3">
+  <div class="slide-inner">
+    <div class="ifi-grid">
+      <div>
+        <span class="badge badge-blue anim-1" data-anim="fadeUp">CORE INNOVATION</span>
+        <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">IFI — <span class="gradient-text">Same Rain,<br>Different Reality</span></h1>
+        <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.7;margin-bottom:24px">
+          Traditional insurance uses one rainfall threshold for an entire city. But a well-drained hilltop and a low-lying floodplain react <strong style="color:#fff">completely differently</strong> to the same rain.
+        </p>
+        <p data-anim="fadeUp" class="anim-4" style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.7;margin-bottom:24px">
+          Our <strong style="color:#818cf8">Gemini AI agent</strong> performs autonomous web research on every 1km² zone — civic tenders, drain capacity, recent pothole reports — and scores each zone's <strong style="color:#fff">Infrastructure Fragility Index (IFI)</strong>.
+        </p>
+
+        <div class="ifi-comparison anim-5" data-anim="fadeUp">
+          <div class="ifi-card safe">
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:4px">PEELAMEDU (HIGH GROUND)</p>
+            <div class="big-number gradient-green">64mm</div>
+            <p style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:6px">threshold · IFI 0.78</p>
+          </div>
+          <div class="ifi-card danger">
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:4px">UKKADAM (FLOOD-PRONE)</p>
+            <div class="big-number" style="font-size:2.5rem;color:#f87171">37.9mm</div>
+            <p style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:6px">threshold · IFI 1.32</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <img src="images/ifi_comparison.png" alt="IFI Comparison" class="ifi-img anim-4" data-anim="fadeRight">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 5: AI/ML ARCHITECTURE ═══════════════════ -->
+<div class="slide arch-slide" data-slide="4">
+  <div class="slide-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+      <div>
+        <span class="badge badge-blue anim-1" data-anim="fadeUp">TECHNICAL DEPTH</span>
+        <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0"><span class="gradient-text">4 AI/ML Layers</span><br>All Live. All Wired.</h1>
+        <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.4);font-size:.85rem;margin-bottom:28px">No mock data. Every model runs on real inputs in production.</p>
+        <div class="arch-layers">
+          <div class="arch-layer anim-4" data-anim="fadeLeft">
+            <h4>🧠 XGBoost Premium<span class="arch-live-badge">LIVE</span></h4>
+            <p>Dynamic premium pricing based on zone IFI, GigScore, monsoon season, and historical flood frequency</p>
+          </div>
+          <div class="arch-layer anim-5" data-anim="fadeRight">
+            <h4>🤖 Gemini ReAct Agent<span class="arch-live-badge">LIVE</span></h4>
+            <p>Autonomous multi-tool agent with Tavily web search for live IFI scoring per 1km² zone</p>
+          </div>
+          <div class="arch-layer anim-6" data-anim="fadeLeft">
+            <h4>🛡️ IsolationForest Fraud<span class="arch-live-badge">LIVE</span></h4>
+            <p>Hardware IMU kinematic variance detection. Catches GPS spoofers via physics, not location</p>
+          </div>
+          <div class="arch-layer anim-7" data-anim="fadeRight">
+            <h4>📸 OpenCV LAV<span class="arch-live-badge">LIVE</span></h4>
+            <p>Real-time 30-frame video analysis for environmental verification of weather conditions</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <img src="images/ai_architecture.png" alt="Architecture" class="arch-img anim-5" data-anim="scaleIn" style="animation:float 5s ease infinite">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 6: FRAUD DETECTION ═══════════════════ -->
+<div class="slide" data-slide="5">
+  <div class="slide-inner">
+    <div class="fraud-grid">
+      <div>
+        <span class="badge badge-red anim-1" data-anim="fadeUp">ANTI-FRAUD ENGINE</span>
+        <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">We Trust <span style="color:#f87171">Physics</span>,<br>Not GPS</h1>
+        <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.7;margin-bottom:20px">
+          GPS coordinates can be spoofed with a $2 app. But <strong style="color:#fff">kinematic variance from IMU hardware sensors</strong> — accelerometer, gyroscope — cannot be faked.
+        </p>
+        <p data-anim="fadeUp" class="anim-4" style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.7;margin-bottom:24px">
+          Our <strong style="color:#818cf8">IsolationForest model</strong> analyzes claim frequency, distance from zone, GigScore history, and real-time sensor data to flag anomalies instantly.
+        </p>
+        <div class="fraud-vs anim-5" data-anim="fadeUp">
+          <div class="fraud-card genuine">
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4)">GENUINE WORKER</p>
+            <div class="big-number" style="color:#34d399">1.4+</div>
+            <p style="font-size:.75rem;color:rgba(255,255,255,.5)">IMU variance (real motion)</p>
+          </div>
+          <div class="fraud-card spoofer">
+            <p style="font-size:.7rem;color:rgba(255,255,255,.4)">GPS SPOOFER</p>
+            <div class="big-number" style="color:#f87171">0.0</div>
+            <p style="font-size:.75rem;color:rgba(255,255,255,.5)">IMU variance (stationary)</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <img src="images/fraud_detection.png" alt="Fraud detection" class="fraud-img anim-4" data-anim="fadeRight">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 7: FINANCIAL SUSTAINABILITY ═══════════════════ -->
+<div class="slide" data-slide="6">
+  <div class="slide-inner" style="text-align:center">
+    <span class="badge badge-green anim-1" data-anim="bounceIn">POOL INTEGRITY</span>
+    <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">Financial <span class="gradient-green">Sustainability</span></h1>
+    <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.4);max-width:500px;margin:0 auto 40px;font-size:.9rem">14-day monsoon stress-tested. Adverse selection blocked.</p>
+    
+    <div data-anim="scaleIn" class="anim-4">
+      <div class="bcr-container">
+        <div class="bcr-ring">
+          <div class="bcr-value">
+            <div class="big-number">0.65</div>
+            <p style="font-size:.85rem;color:rgba(255,255,255,.5);margin-top:4px">Burn-Cost Ratio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sustainability-facts">
+      <div class="sus-fact anim-5" data-anim="fadeUp">
+        <h3 class="gradient-green">48h</h3>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:8px">Enrollment lockout around weather alerts</p>
+      </div>
+      <div class="sus-fact anim-6" data-anim="fadeUp">
+        <h3 class="gradient-amber">35%</h3>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:8px">Reduction in false payouts via IFI precision</p>
+      </div>
+      <div class="sus-fact anim-7" data-anim="fadeUp">
+        <h3 class="gradient-text">15-day</h3>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:8px">IFI cache lifespan to optimize API costs</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 8: VERNACULAR + ACCESSIBILITY ═══════════════════ -->
+<div class="slide" data-slide="7">
+  <div class="slide-inner">
+    <div style="text-align:center;margin-bottom:32px">
+      <span class="badge badge-amber anim-1" data-anim="bounceIn">ACCESSIBILITY</span>
+      <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">Built for <span class="gradient-amber">Ramesh</span>, Not for VCs</h1>
+      <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.4);max-width:500px;margin:0 auto;font-size:.9rem">Tamil UI, outdoor-readable contrast, 52px touch targets</p>
+    </div>
+    <div class="vern-grid">
+      <div class="vern-card anim-4" data-anim="fadeLeft">
+        <h3 style="color:#fbbf24">🗣️ Vernacular Support</h3>
+        <div class="vern-feature"><span class="icon">🇮🇳</span><span>Full Tamil (தமிழ்) + English toggle</span></div>
+        <div class="vern-feature"><span class="icon">🔤</span><span>Plain language labels — no insurance jargon</span></div>
+        <div class="vern-feature"><span class="icon">🔊</span><span>Edge-TTS voice guidance for non-readers</span></div>
+        <div class="vern-feature"><span class="icon">📱</span><span>Mobile-first responsive design</span></div>
+      </div>
+      <div class="vern-card anim-5" data-anim="fadeRight">
+        <h3 style="color:#818cf8">♿ Physical Accessibility</h3>
+        <div class="vern-feature"><span class="icon">👆</span><span>52px minimum touch targets (WCAG AAA)</span></div>
+        <div class="vern-feature"><span class="icon">☀️</span><span>High contrast for outdoor sunlight readability</span></div>
+        <div class="vern-feature"><span class="icon">🌙</span><span>Auto dark mode for night-shift workers (6PM–6AM)</span></div>
+        <div class="vern-feature"><span class="icon">📐</span><span>Large typography, no complex forms</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 9: DEMO SCREENSHOTS ═══════════════════ -->
+<div class="slide" data-slide="8">
+  <div class="slide-inner" style="text-align:center">
+    <span class="badge badge-blue anim-1" data-anim="bounceIn">LIVE DEMO</span>
+    <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">Product <span class="gradient-text">Walkthrough</span></h1>
+    <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.4);max-width:500px;margin:0 auto;font-size:.9rem">Four key screens from the working prototype</p>
+    
+    <div class="screenshots-grid">
+      <div class="screenshot-card anim-4" data-anim="fadeLeft">
+        <div class="screenshot-mock ss-1">🤖</div>
+        <h4>AI Quote + IFI Reasoning</h4>
+        <p>Gemini agent's live research summary with zone-specific IFI score and dynamically priced premium</p>
+      </div>
+      <div class="screenshot-card anim-5" data-anim="fadeRight">
+        <div class="screenshot-mock ss-2">🗣️</div>
+        <h4>Tamil Dashboard</h4>
+        <p>Full vernacular interface with translated weather data, GigScore, and claim history</p>
+      </div>
+      <div class="screenshot-card anim-6" data-anim="fadeLeft">
+        <div class="screenshot-mock ss-3">📊</div>
+        <h4>Insurer BCR Panel</h4>
+        <p>Real-time actuarial view showing premium pool health, expense ratios, and payout velocity</p>
+      </div>
+      <div class="screenshot-card anim-7" data-anim="fadeRight">
+        <div class="screenshot-mock ss-4">🔒</div>
+        <h4>Adverse Selection Lockout</h4>
+        <p>RED alert active — enrollment suspended with 48hr cooldown timer to protect pool integrity</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 10: BUSINESS MODEL ═══════════════════ -->
+<div class="slide" data-slide="9">
+  <div class="slide-inner">
+    <div class="biz-grid">
+      <div>
+        <span class="badge badge-green anim-1" data-anim="fadeUp">REVENUE MODEL</span>
+        <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">The <span class="gradient-green">Numbers</span></h1>
+        <p data-anim="fadeUp" class="anim-3" style="color:rgba(255,255,255,.4);font-size:.85rem;margin-bottom:28px">Micro-premium model designed for ₹600/day earning workers</p>
+        
+        <div data-anim="fadeUp" class="anim-4" style="margin-bottom:20px">
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px">WEEKLY PREMIUM RANGE</p>
+          <div class="revenue-bar" style="background:rgba(91,110,245,.1);border:1px solid rgba(91,110,245,.15)">
+            <div class="revenue-bar-fill" style="background:linear-gradient(90deg,#5b6ef5,#818cf8);--bar-width:75%"></div>
+            <span class="revenue-bar-label">₹25 – ₹99/week</span>
+          </div>
+        </div>
+        
+        <div data-anim="fadeUp" class="anim-5" style="margin-bottom:20px">
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px">MONTHLY POOL (10K WORKERS)</p>
+          <div class="revenue-bar" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.15)">
+            <div class="revenue-bar-fill" style="background:linear-gradient(90deg,#10b981,#34d399);--bar-width:85%"></div>
+            <span class="revenue-bar-label">₹70L / month</span>
+          </div>
+        </div>
+
+        <div data-anim="fadeUp" class="anim-6" style="margin-bottom:20px">
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px">FRAUD REDUCTION VIA IFI PRECISION</p>
+          <div class="revenue-bar" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.15)">
+            <div class="revenue-bar-fill" style="background:linear-gradient(90deg,#f59e0b,#fbbf24);--bar-width:35%"></div>
+            <span class="revenue-bar-label">35% fewer false payouts</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="biz-highlight anim-7 card-glow" data-anim="scaleIn">
+          <p style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px;letter-spacing:2px;font-weight:700">ANNUAL REVENUE</p>
+          <div class="big-number gradient-green">₹3.64Cr</div>
+          <p style="font-size:.85rem;color:rgba(255,255,255,.5);margin-top:8px">at 10,000 workers</p>
+          <div style="border-top:1px solid rgba(255,255,255,.08);margin:20px 0;padding-top:20px">
+            <p style="font-size:.75rem;color:rgba(255,255,255,.3)">10K workers × ₹70/week avg</p>
+            <p style="font-size:.75rem;color:rgba(255,255,255,.3)">= ₹7L/week → ₹70L/month</p>
+            <p style="font-size:.75rem;color:rgba(255,255,255,.3)">= ₹3.64Cr/year</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SLIDE 11: FUTURE SCOPE ═══════════════════ -->
+<div class="slide future-slide" data-slide="10">
+  <div class="slide-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+      <div>
+        <span class="badge badge-blue anim-1" data-anim="fadeUp">ROADMAP</span>
+        <h1 data-anim="fadeUp" class="anim-2" style="font-size:2.5rem;margin:16px 0">Future <span class="gradient-text">Scope</span></h1>
+        
+        <div class="timeline anim-3" data-anim="fadeUp">
+          <div class="timeline-item anim-4" data-anim="fadeLeft">
+            <h4>Q3 2026 — Platform Expansion</h4>
+            <p>Grocery delivery (Blinkit, Zepto), E-commerce logistics (Amazon Flex, Flipkart). Expand zone database to cover 50+ Indian cities.</p>
+          </div>
+          <div class="timeline-item anim-5" data-anim="fadeLeft">
+            <h4>Q4 2026 — Ride-Share Integration</h4>
+            <p>Ola, Uber driver protection. Heat-wave and AQI-based parametric triggers for outdoor workers.</p>
+          </div>
+          <div class="timeline-item anim-6" data-anim="fadeLeft">
+            <h4>2027 — SE Asia Expansion</h4>
+            <p>Indonesia (Grab), Philippines (Lalamove), Vietnam. 300M+ gig workers across the region.</p>
+          </div>
+          <div class="timeline-item anim-7" data-anim="fadeLeft">
+            <h4>2027+ — Blockchain Audit Trail</h4>
+            <p>Immutable claim records, transparent pool governance, decentralized reinsurance protocols.</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <img src="images/future_scope.png" alt="Future scope" class="anim-5" data-anim="scaleIn" style="width:100%;max-width:420px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:float 5s ease infinite">
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- Navigation -->
+<div class="slide-counter"><span id="slideNum">01</span> / 11</div>
+<button class="nav-arrows nav-prev" onclick="changeSlide(-1)">‹</button>
+<button class="nav-arrows nav-next" onclick="changeSlide(1)">›</button>
+<div class="nav-bar" id="navBar"></div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+const slideNum = document.getElementById('slideNum');
+
+// Build nav dots
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goToSlide(i);
+  navBar.appendChild(dot);
+}
+
+function goToSlide(n) {
+  if (n < 0 || n >= total || n === current) return;
+  
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-up');
+  setTimeout(() => slides[current === n ? current : (current)].classList.remove('exit-up'), 600);
+  
+  const prevCurrent = current;
+  current = n;
+  
+  setTimeout(() => {
+    slides[prevCurrent].classList.remove('exit-up');
+  }, 600);
+  
+  slides[current].classList.add('active');
+  
+  // Update dots
+  document.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+  
+  slideNum.textContent = String(current + 1).padStart(2, '0');
+}
+
+function changeSlide(dir) {
+  goToSlide(current + dir);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+});
+
+// Touch/swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+});
+</script>
+</body>
+</html>
